@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yankee Finder — USA Product Check</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orbit" aria-hidden="true"></div>
+    <main class="app">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Live camera + OpenAI image analysis</p>
+          <h1>Yankee Finder</h1>
+          <p class="lede">
+            Aim at a product, snap a photo, and we will infer whether the brand is
+            likely American using OpenAI vision. No OCR required.
+          </p>
+        </div>
+        <div class="status-card">
+          <p class="status-title">Detection status</p>
+          <p id="status" class="status">Camera ready when you allow access.</p>
+          <div id="result" class="result" data-state="idle">
+            <span class="result-label">Waiting for a capture</span>
+            <span class="result-pill">—</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="camera-grid">
+        <div class="camera-panel">
+          <label class="api-key">
+            OpenAI API key
+            <input
+              id="apiKey"
+              type="password"
+              placeholder="sk-..."
+              autocomplete="off"
+            />
+          </label>
+          <div class="key-actions">
+            <button id="testKey" class="btn ghost">Test key</button>
+            <button id="clearKey" class="btn ghost">Clear key</button>
+          </div>
+          <div class="camera-frame">
+            <video id="video" autoplay playsinline></video>
+            <canvas id="canvas" class="hidden"></canvas>
+            <img id="snapshot" alt="Captured frame" class="hidden" />
+          </div>
+          <div class="controls">
+            <button id="enableCamera" class="btn ghost hidden">Enable camera</button>
+            <button id="capture" class="btn ghost" disabled>Capture photo</button>
+            <button id="analyze" class="btn" disabled>Analyze image</button>
+          </div>
+          <p class="hint">
+            Tip: Keep the brand logo and packaging in frame for better identification.
+          </p>
+        </div>
+
+        <aside class="inspector">
+          <h2>Model reasoning</h2>
+          <p class="small">
+            We will ask OpenAI to identify the product and estimate the brand's country
+            of origin. The output below shows the model's response.
+          </p>
+          <div class="extract">
+            <p class="extract-title">Model output</p>
+            <div id="modelOutput" class="model-output empty">
+              <div class="icon-wrap">
+                <svg
+                  class="icon icon-stop"
+                  viewBox="0 0 100 100"
+                  aria-hidden="true"
+                >
+                  <polygon
+                    points="30,5 70,5 95,30 95,70 70,95 30,95 5,70 5,30"
+                    fill="#d93c2f"
+                  />
+                  <text
+                    x="50"
+                    y="58"
+                    text-anchor="middle"
+                    font-size="22"
+                    font-family="Space Grotesk, sans-serif"
+                    fill="#fff"
+                    font-weight="700"
+                  >
+                    STOP
+                  </text>
+                </svg>
+                <svg
+                  class="icon icon-up"
+                  viewBox="0 0 96 96"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M38 16c3 0 6 2 7 5l5 17h22c5 0 9 4 9 9 0 1 0 2-1 3l-8 28c-1 5-6 9-11 9H32c-6 0-11-5-11-11V41c0-4 2-7 5-9l9-13c1-2 3-3 5-3z"
+                    fill="#1f9c57"
+                  />
+                  <rect x="10" y="40" width="12" height="40" rx="4" fill="#1f9c57" />
+                </svg>
+              </div>
+              <div class="model-fields">
+                <p class="model-title">Waiting for capture…</p>
+                <p class="model-meta">Brand: —</p>
+                <p class="model-meta">Country: —</p>
+                <p class="model-meta">Confidence: —</p>
+                <p class="model-reasoning">Reasoning: —</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="history">
+        <div class="history-header">
+          <h2>Scan history</h2>
+          <p class="small">Latest scans appear first.</p>
+        </div>
+        <div id="historyList" class="history-list">
+          <p class="empty-history">No scans yet.</p>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
