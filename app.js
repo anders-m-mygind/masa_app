@@ -18,11 +18,39 @@ const apiKeyInput = document.getElementById("apiKey");
 const testKeyBtn = document.getElementById("testKey");
 const clearKeyBtn = document.getElementById("clearKey");
 const historyList = document.getElementById("historyList");
+const openSetupBtn = document.getElementById("openSetup");
+const closeSetupBtn = document.getElementById("closeSetup");
+const setupPanel = document.getElementById("setupPanel");
+const keyStatus = document.getElementById("keyStatus");
 
 const savedKey = localStorage.getItem("openai_api_key");
 if (savedKey) {
   apiKeyInput.value = savedKey;
 }
+
+const hasStoredKey = () => Boolean(apiKeyInput.value);
+
+const updateActionButtons = () => {
+  const keyReady = hasStoredKey();
+  enableCameraBtn.disabled = !keyReady;
+  captureBtn.disabled = !keyReady || !stream;
+  analyzeBtn.disabled = !keyReady || !stream;
+};
+
+const updateKeyState = () => {
+  const keyReady = hasStoredKey();
+  keyStatus.textContent = keyReady ? "Key: stored" : "Key: not set";
+  updateActionButtons();
+  if (!keyReady) {
+    setStatus("Add your API key in Setup to enable scanning.");
+    enableCameraBtn.classList.add("hidden");
+  } else if (!stream) {
+    setStatus("Key stored. Enable the camera to begin.");
+    enableCameraBtn.classList.remove("hidden");
+  } else {
+    enableCameraBtn.classList.add("hidden");
+  }
+};
 
 apiKeyInput.addEventListener("input", () => {
   const cleaned = apiKeyInput.value.replace(/\s+/g, "");
@@ -32,12 +60,14 @@ apiKeyInput.addEventListener("input", () => {
   } else {
     localStorage.removeItem("openai_api_key");
   }
+  updateKeyState();
 });
 
 clearKeyBtn.addEventListener("click", () => {
   apiKeyInput.value = "";
   localStorage.removeItem("openai_api_key");
   setStatus("API key cleared.");
+  updateKeyState();
 });
 
 const looksLikeKey = (value) => {
@@ -61,13 +91,14 @@ const testApiKey = async (apiKey) => {
 testKeyBtn.addEventListener("click", async () => {
   const apiKey = apiKeyInput.value.replace(/\s+/g, "");
   if (!looksLikeKey(apiKey)) {
-    setStatus("Paste a valid API key (starts with sk-).");
+    setStatus("Paste a valid API key that starts with sk-.");
     return;
   }
   setStatus("Testing API key…");
   try {
     await testApiKey(apiKey);
-    setStatus("API key OK. Stored for this browser.");
+    setStatus("Key verified and saved for this browser.");
+    updateKeyState();
   } catch (error) {
     setStatus("API key test failed.");
     console.error(error);
@@ -173,8 +204,7 @@ const startCamera = async () => {
     });
     video.srcObject = stream;
     await video.play();
-    captureBtn.disabled = false;
-    analyzeBtn.disabled = false;
+    updateActionButtons();
     enableCameraBtn.classList.add("hidden");
     setStatus("Camera live. Capture a photo to begin.");
   } catch (error) {
@@ -328,6 +358,33 @@ analyzeBtn.addEventListener("click", async () => {
   }
 });
 
+const openSetup = () => {
+  setupPanel.classList.remove("hidden");
+  apiKeyInput.focus();
+};
+
+const closeSetup = () => {
+  setupPanel.classList.add("hidden");
+};
+
+openSetupBtn.addEventListener("click", openSetup);
+closeSetupBtn.addEventListener("click", closeSetup);
+setupPanel.addEventListener("click", (event) => {
+  if (!event.target.closest(".setup-card")) {
+    closeSetup();
+  }
+});
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !setupPanel.classList.contains("hidden")) {
+    closeSetup();
+  }
+});
+
 window.addEventListener("beforeunload", stopStream);
-window.addEventListener("load", startCamera);
+window.addEventListener("load", () => {
+  updateKeyState();
+  if (hasStoredKey()) {
+    startCamera();
+  }
+});
 enableCameraBtn.addEventListener("click", startCamera);

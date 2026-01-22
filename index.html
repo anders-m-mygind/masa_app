@@ -27,6 +27,10 @@
         <div class="status-card">
           <p class="status-title">Detection status</p>
           <p id="status" class="status">Camera ready when you allow access.</p>
+          <div class="status-meta">
+            <span id="keyStatus" class="key-status">Key: not set</span>
+            <button id="openSetup" class="btn ghost small">Setup</button>
+          </div>
           <div id="result" class="result" data-state="idle">
             <span class="result-label">Waiting for a capture</span>
             <span class="result-pill">—</span>
@@ -36,31 +40,24 @@
 
       <section class="camera-grid">
         <div class="camera-panel">
-          <label class="api-key">
-            API key
-            <input
-              id="apiKey"
-              type="password"
-              placeholder="sk-..."
-              autocomplete="off"
-            />
-          </label>
-          <div class="key-actions">
-            <button id="testKey" class="btn ghost">Test key</button>
-            <button id="clearKey" class="btn ghost">Clear key</button>
-          </div>
           <div class="camera-frame">
             <video id="video" autoplay playsinline></video>
             <canvas id="canvas" class="hidden"></canvas>
             <img id="snapshot" alt="Captured frame" class="hidden" />
-          </div>
-          <div class="controls">
-            <button id="enableCamera" class="btn ghost hidden">Enable camera</button>
-            <button id="capture" class="btn ghost" disabled>Capture photo</button>
-            <button id="analyze" class="btn" disabled>Analyze image</button>
+            <div class="frame-overlay">
+              <div class="controls">
+                <button id="enableCamera" class="btn ghost on-media hidden">
+                  Enable camera
+                </button>
+                <button id="capture" class="btn ghost on-media" disabled>
+                  Capture photo
+                </button>
+                <button id="analyze" class="btn" disabled>Analyze image</button>
+              </div>
+            </div>
           </div>
           <p class="hint">
-            Tip: Keep the brand logo and packaging in frame for better identification.
+            Tip: Keep the brand logo and packaging in frame for best results.
           </p>
         </div>
 
@@ -129,6 +126,40 @@
         </div>
       </section>
     </main>
+
+    <div
+      id="setupPanel"
+      class="setup-panel hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="setupTitle"
+    >
+      <div class="setup-card">
+        <div class="setup-header">
+          <h2 id="setupTitle">Setup</h2>
+          <button id="closeSetup" class="btn ghost small" type="button">
+            Close
+          </button>
+        </div>
+        <p class="small">
+          Add your API key to enable scanning on this device. We only store it in
+          your browser.
+        </p>
+        <label class="api-key">
+          API key
+          <input
+            id="apiKey"
+            type="password"
+            placeholder="sk-..."
+            autocomplete="off"
+          />
+        </label>
+        <div class="key-actions">
+          <button id="testKey" class="btn ghost">Test key</button>
+          <button id="clearKey" class="btn ghost">Clear key</button>
+        </div>
+      </div>
+    </div>
 
     <script src="app.js"></script>
   </body>
