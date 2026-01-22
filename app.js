@@ -61,7 +61,7 @@ const testApiKey = async (apiKey) => {
 testKeyBtn.addEventListener("click", async () => {
   const apiKey = apiKeyInput.value.replace(/\s+/g, "");
   if (!looksLikeKey(apiKey)) {
-    setStatus("Paste a valid OpenAI API key (starts with sk-).");
+    setStatus("Paste a valid API key (starts with sk-).");
     return;
   }
   setStatus("Testing API key…");
@@ -221,7 +221,7 @@ analyzeBtn.addEventListener("click", async () => {
 
   const apiKey = apiKeyInput.value.replace(/\s+/g, "");
   if (!apiKey) {
-    setStatus("Enter your OpenAI API key to analyze.");
+    setStatus("Enter your API key to analyze.");
     return;
   }
   if (!looksLikeKey(apiKey)) {
@@ -229,7 +229,7 @@ analyzeBtn.addEventListener("click", async () => {
     return;
   }
 
-  setStatus("Asking OpenAI to identify the product…");
+  setStatus("Analyzing the product…");
   setResult("idle", "Analyzing image…", "Working");
   updateModelOutput({
     state: "unknown",
@@ -266,7 +266,7 @@ analyzeBtn.addEventListener("click", async () => {
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      throw new Error(`API error: ${response.status}`);
     }
 
     const payload = await response.json();
@@ -317,13 +317,13 @@ analyzeBtn.addEventListener("click", async () => {
     setStatus("Analysis failed. Check your API key and try again.");
     updateModelOutput({
       state: "unknown",
-      title: "OpenAI request failed.",
+      title: "Request failed.",
       brand: "—",
       country: "—",
       confidence: "—",
       reasoning: "Check your API key and plan.",
     });
-    setResult("idle", "OpenAI request failed.", "Error");
+    setResult("idle", "Request failed.", "Error");
     console.error(error);
   }
 });
